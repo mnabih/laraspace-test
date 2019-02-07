@@ -231,9 +231,9 @@
               <span class="icon-fa arrow icon-fa-fw"/>
             </a>
 
-            <router-link to="/admin/users/profile">
+            <!-- <router-link to="/admin/users/profile">
               Profile
-            </router-link>
+            </router-link> -->
 
             <router-link to="/admin/users/all">
               All Users

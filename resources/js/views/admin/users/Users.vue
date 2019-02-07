@@ -11,9 +11,9 @@
         <a href="#" class="btn btn-primary" @click.prevent="newModal">
           <i class="icon-fa icon-fa-plus"/> New User
         </a>
-        <button class="btn btn-danger">
+        <!-- <button class="btn btn-danger" @click.prevent="loadUsers">
           <i class="icon-fa icon-fa-trash"/> Delete
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="row">
@@ -29,10 +29,25 @@
               sort-by="row.name"
               sort-order="desc"
               table-class="table"
+              ref="table"
             >
+              <table-column show="id" label="id"/>
               <table-column show="name" label="Name"/>
               <table-column show="email" label="Email"/>
               <table-column show="role" label="Role"/>
+              <table-column label="Avatar">
+                 <template slot-scope="row">
+                     <!-- <img class="img-circle" :src="getProfilePhoto(row.avatar)" alt="Admin Avatar"
+                        > -->
+                        <a
+                          :href="getProfilePhoto(row.avatar)"
+                          class="avatar"
+                        >
+                          <img :src="getProfilePhoto(row.avatar)" alt="Avatar" style="width: 36px;
+    border-radius: 2px;">
+                        </a>
+                 </template>
+               </table-column>
               <table-column
                 show="created_at"
                 label="Registered On"
@@ -45,11 +60,11 @@
               >
                 <template slot-scope="row">
                   <div class="table__actions">
-                    <router-link to="/admin/users/profile">
-                      <a class="btn btn-default btn-sm" @click="editModal(user)">
+                    <!-- <router-link to="/admin/users/profile"> -->
+                      <a class="btn btn-default btn-sm" @click="editModal(row)">
                         <i class="icon-fa icon-fa-search"/> Edit
                       </a>
-                    </router-link>
+                    <!-- </router-link> -->
                     <a
                       class="btn btn-default btn-sm"
                       data-delete
@@ -141,7 +156,7 @@ export default {
   data () {
     return {
       editmode: false,
-      users: [],
+      //users: [],
       form: new Form({
           id:'',
           name : '',
@@ -156,8 +171,10 @@ export default {
       try {
         const response = await axios.get(`/api/admin/users/get?page=${page}`)
 
-        return {
-          data: response.data.data,
+        var d = response.data.data;
+        console.log(d);
+        return {          
+          data: response.data.data,          
           pagination: {
             totalPages: response.data.last_page,
             currentPage: page,
@@ -186,6 +203,7 @@ export default {
       try {
         let response = await window.axios.delete('/api/admin/users/' + id)
         this.users = response.data
+        this.$refs.table.refresh();
         window.toastr['success']('User Deleted', 'Success')
       } catch (error) {
         if (error) {
@@ -193,20 +211,34 @@ export default {
         }
       }
     }, /************* new work ****************/
+    getProfilePhoto(avatar){
+
+                // if photo from update - base 64 not saved yet
+                // else from database put with path
+                // if(this.form.photo != null){
+                //   let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+ this.form.photo ;
+                // return photo;
+                // }else{
+                //     return "";
+                // }
+                return "/assets/img/avatars/" + avatar ;
+
+            },
+    
     updateUser(){
         this.$Progress.start();
         // console.log('Editing data');
-        this.form.put('api/user/'+this.form.id)
+        this.form.post('/api/admin/users/update/'+this.form.id)
         .then(() => {
             // success
             $('#addNew').modal('hide');
-             swal(
-                'Updated!',
-                'Information has been updated.',
-                'success'
-                )
-                this.$Progress.finish();
-                 Fire.$emit('AfterCreate');
+            
+            window.toastr['success']('User Updated successfully', 'Success')
+
+            this.$Progress.finish();
+            this.$refs.table.refresh();
+            //Fire.$emit('reload');
+            //window.location.reload()
         })
         .catch(() => {
             this.$Progress.fail();
@@ -225,21 +257,17 @@ export default {
         $('#addNew').modal('show');
     },
     
-    createUser(){
+    createUser(){      
 
-        //this.$Progress.start();
+        this.$Progress.start();
 
         this.form.post('/api/admin/users/post')
         .then(()=>{
-            //Fire.$emit('AfterCreate');
+
             $('#addNew').modal('hide')
-
+            this.$refs.table.refresh();
             window.toastr['success']('User Created in successfully', 'Success')
-            loadUsers()
-
-            //this.$Progress.finish();
-
-            
+            this.$Progress.finish();           
 
         })
         .catch(()=>{
@@ -248,11 +276,10 @@ export default {
           
         })
     },
-    loadUsers(){
-        axios.get("/api/admin/users/get").then(({ data }) => (this.users = data));
-        
-    },
+    
 
-  }
+  },
+  created(){
+  },
 }
 </script>

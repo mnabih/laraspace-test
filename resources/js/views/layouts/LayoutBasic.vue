@@ -6,6 +6,7 @@
       <router-view/>
     </transition>
     <site-footer/>
+    <vue-progress-bar></vue-progress-bar>
   </div>
 </template>
 <script type="text/babel">

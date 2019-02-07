@@ -20,11 +20,24 @@ window.$ = require('jquery')
 
 
 import { Form, HasError, AlertError } from 'vform'
-
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
-
 window.Form = Form;
+
+import VueProgressBar from 'vue-progressbar'
+Vue.use(VueProgressBar, {
+  color: 'rgb(143, 255, 199)',
+  failedColor: 'red',
+  height: '2px'
+})
+
+window.Fire = new Vue();
+
+
+
+
+
+/********** end ************/
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

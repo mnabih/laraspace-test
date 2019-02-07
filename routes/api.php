@@ -57,6 +57,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
             'as' => 'admin.users.add', 'uses' => 'Demo\UsersController@store'
         ]);
 
+        Route::post('update/{id}',[
+            'as' => 'admin.users.update', 'uses' => 'Demo\UsersController@update'
+        ]);
+
     });
 
 });
