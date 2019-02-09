@@ -78,7 +78,7 @@
         </v-dropdown>
       </li> -->
       <li>
-        <v-dropdown :show-arrow="false">
+        <!-- <v-dropdown show-arrow="false">
           <a
             slot="activator"
             href="#"
@@ -88,7 +88,7 @@
             class="avatar"
           >
             <img src="/assets/img/avatars/avatar.png" alt="Avatar">
-          </a>
+          </a> -->
 
           <!-- <v-dropdown-item>
             <router-link class="dropdown-item" to="/admin/settings">
@@ -96,7 +96,7 @@
             </router-link>
           </v-dropdown-item> -->
           
-          <v-dropdown-item>
+          <!-- <v-dropdown-item> -->
             <a
               href="#"
               class="dropdown-item"
@@ -104,8 +104,8 @@
             >
               <i class="icon-fa icon-fa-sign-out"/> Logout
             </a>
-          </v-dropdown-item>
-        </v-dropdown>
+          <!-- </v-dropdown-item> -->
+        <!-- </v-dropdown> -->
       </li>
     </ul>
   </header>

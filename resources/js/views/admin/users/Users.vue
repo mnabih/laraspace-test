@@ -11,7 +11,7 @@
         <a href="#" class="btn btn-primary" @click.prevent="newModal">
           <i class="icon-fa icon-fa-plus"/> New User
         </a>
-        <!-- <button class="btn btn-danger" @click.prevent="loadUsers">
+        <!-- <button class="btn btn-danger" @click.prevent="">
           <i class="icon-fa icon-fa-trash"/> Delete
         </button> -->
       </div>
@@ -37,15 +37,13 @@
               <table-column show="role" label="Role"/>
               <table-column label="Avatar">
                  <template slot-scope="row">
-                     <!-- <img class="img-circle" :src="getProfilePhoto(row.avatar)" alt="Admin Avatar"
-                        > -->
-                        <a
-                          :href="getProfilePhoto(row.avatar)"
+                        <!-- <a
+                          href="#"
                           class="avatar"
-                        >
-                          <img :src="getProfilePhoto(row.avatar)" alt="Avatar" style="width: 36px;
-    border-radius: 2px;">
-                        </a>
+                        > -->
+                          <img :src="getProfilePhoto(row.avatar)" alt="Avatar" 
+                          style="width: 36px;border-radius: 2px;">
+                        <!-- </a> -->
                  </template>
                </table-column>
               <table-column
@@ -128,6 +126,24 @@
                             <has-error :form="form" field="password"></has-error>
                         </div>
 
+                        <!-- <div class="form-group">
+                            <input type="file" name="avatar"
+                            @change="updateProfile" 
+                            id="avatar" placeholder="avatar"
+                            class="form-control" 
+                            :class="{ 'is-invalid': form.errors.has('avatar') }"
+                            >
+                            <has-error :form="form" field="avatar"></has-error>
+                        </div> -->
+
+                        <div class="form-group">
+                                    <label for="avatar" class="col-sm-2 control-label"> Photo</label>
+                                    <div class="col-sm-6">
+                                        <input type="file" @change="updateProfile" name="avatar" class="form-input">
+                                    </div>
+
+                                </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -163,16 +179,17 @@ export default {
           email: '',
           password: '',
           role: '',
+          avatar: '',
       })
     }
   },
   methods: {
     async getUsers ({ page, filter, sort }) {
       try {
-        const response = await axios.get(`/api/admin/users/get?page=${page}`)
+        const response = await axios.get(`/api/admin/users/get?page=${page},filter=${filter}`)
 
-        var d = response.data.data;
-        console.log(d);
+        // var d = response.data.data;
+        // console.log(d);
         return {          
           data: response.data.data,          
           pagination: {
@@ -183,7 +200,8 @@ export default {
         }
       } catch (error) {
         if (error) {
-          window.toastr['error']('There was an error', 'Error')
+          window.toastr['error']('There was an error on get users', 'Error')
+          this.$Progress.fail();
         }
       }
     },
@@ -207,27 +225,30 @@ export default {
         window.toastr['success']('User Deleted', 'Success')
       } catch (error) {
         if (error) {
-          window.toastr['error']('There was an error', 'Error')
+          window.toastr['error']('There was an error on delete user', 'Error')
+          this.$Progress.fail();
         }
       }
     }, /************* new work ****************/
     getProfilePhoto(avatar){
+        return "/dashboard/uploads/users/" + avatar ;
+    },
+    updateProfile(e){
+        let file = e.target.files[0];
+        let reader = new FileReader();
 
-                // if photo from update - base 64 not saved yet
-                // else from database put with path
-                // if(this.form.photo != null){
-                //   let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+ this.form.photo ;
-                // return photo;
-                // }else{
-                //     return "";
-                // }
-                return "/assets/img/avatars/" + avatar ;
-
-            },
-    
+        let limit = 1024 * 1024 * 2;
+        if(file['size'] > limit){
+            window.toastr['error']('The image size is big', 'Error')
+            return false;
+        }
+        reader.onloadend = (file) => {
+            this.form.avatar = reader.result;
+        }
+        reader.readAsDataURL(file);
+    },    
     updateUser(){
         this.$Progress.start();
-        // console.log('Editing data');
         this.form.post('/api/admin/users/update/'+this.form.id)
         .then(() => {
             // success
@@ -257,7 +278,8 @@ export default {
         $('#addNew').modal('show');
     },
     
-    createUser(){      
+    createUser(){ 
+    console.log(this.form);     
 
         this.$Progress.start();
 
@@ -272,7 +294,8 @@ export default {
         })
         .catch(()=>{
           
-            window.toastr['error']('There was an error', 'Error')
+            window.toastr['error']('There was an error on created', 'Error')
+            this.$Progress.fail();
           
         })
     },

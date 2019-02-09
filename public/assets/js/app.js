@@ -62057,61 +62057,25 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("ul", { staticClass: "action-list" }, [
-      _c(
-        "li",
-        [
-          _c(
-            "v-dropdown",
-            { attrs: { "show-arrow": false } },
-            [
-              _c(
-                "a",
-                {
-                  staticClass: "avatar",
-                  attrs: {
-                    slot: "activator",
-                    href: "#",
-                    "data-toggle": "dropdown",
-                    "aria-haspopup": "true",
-                    "aria-expanded": "false"
-                  },
-                  slot: "activator"
-                },
-                [
-                  _c("img", {
-                    attrs: {
-                      src: "/assets/img/avatars/avatar.png",
-                      alt: "Avatar"
-                    }
-                  })
-                ]
-              ),
-              _vm._v(" "),
-              _c("v-dropdown-item", [
-                _c(
-                  "a",
-                  {
-                    staticClass: "dropdown-item",
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        return _vm.logout($event)
-                      }
-                    }
-                  },
-                  [
-                    _c("i", { staticClass: "icon-fa icon-fa-sign-out" }),
-                    _vm._v(" Logout\n          ")
-                  ]
-                )
-              ])
-            ],
-            1
-          )
-        ],
-        1
-      )
+      _c("li", [
+        _c(
+          "a",
+          {
+            staticClass: "dropdown-item",
+            attrs: { href: "#" },
+            on: {
+              click: function($event) {
+                $event.preventDefault()
+                return _vm.logout($event)
+              }
+            }
+          },
+          [
+            _c("i", { staticClass: "icon-fa icon-fa-sign-out" }),
+            _vm._v(" Logout\n          ")
+          ]
+        )
+      ])
     ])
   ])
 }
@@ -62688,7 +62652,8 @@ exports.default = {
         name: '',
         email: '',
         password: '',
-        role: ''
+        role: '',
+        avatar: ''
       })
     };
   },
@@ -62701,20 +62666,17 @@ exports.default = {
           filter = _ref.filter,
           sort = _ref.sort;
       return (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-        var response, d;
+        var response;
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios.get('/api/admin/users/get?page=' + page);
+                return axios.get('/api/admin/users/get?page=' + page + ',filter=' + filter);
 
               case 3:
                 response = _context.sent;
-                d = response.data.data;
-
-                console.log(d);
                 return _context.abrupt('return', {
                   data: response.data.data,
                   pagination: {
@@ -62724,20 +62686,21 @@ exports.default = {
                   }
                 });
 
-              case 9:
-                _context.prev = 9;
+              case 7:
+                _context.prev = 7;
                 _context.t0 = _context['catch'](0);
 
                 if (_context.t0) {
-                  window.toastr['error']('There was an error', 'Error');
+                  window.toastr['error']('There was an error on get users', 'Error');
+                  _this.$Progress.fail();
                 }
 
-              case 12:
+              case 10:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, _this, [[0, 9]]);
+        }, _callee, _this, [[0, 7]]);
       }))();
     },
     deleteUser: function deleteUser(id) {
@@ -62779,7 +62742,8 @@ exports.default = {
                 _context2.t0 = _context2['catch'](0);
 
                 if (_context2.t0) {
-                  window.toastr['error']('There was an error', 'Error');
+                  window.toastr['error']('There was an error on delete user', 'Error');
+                  _this2.$Progress.fail();
                 }
 
               case 12:
@@ -62792,34 +62756,40 @@ exports.default = {
     },
     /************* new work ****************/
     getProfilePhoto: function getProfilePhoto(avatar) {
-
-      // if photo from update - base 64 not saved yet
-      // else from database put with path
-      // if(this.form.photo != null){
-      //   let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+ this.form.photo ;
-      // return photo;
-      // }else{
-      //     return "";
-      // }
-      return "/assets/img/avatars/" + avatar;
+      return "/dashboard/uploads/users/" + avatar;
     },
-    updateUser: function updateUser() {
+    updateProfile: function updateProfile(e) {
       var _this3 = this;
 
+      var file = e.target.files[0];
+      var reader = new FileReader();
+
+      var limit = 1024 * 1024 * 2;
+      if (file['size'] > limit) {
+        window.toastr['error']('The image size is big', 'Error');
+        return false;
+      }
+      reader.onloadend = function (file) {
+        _this3.form.avatar = reader.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    updateUser: function updateUser() {
+      var _this4 = this;
+
       this.$Progress.start();
-      // console.log('Editing data');
       this.form.post('/api/admin/users/update/' + this.form.id).then(function () {
         // success
         $('#addNew').modal('hide');
 
         window.toastr['success']('User Updated successfully', 'Success');
 
-        _this3.$Progress.finish();
-        _this3.$refs.table.refresh();
+        _this4.$Progress.finish();
+        _this4.$refs.table.refresh();
         //Fire.$emit('reload');
         //window.location.reload()
       }).catch(function () {
-        _this3.$Progress.fail();
+        _this4.$Progress.fail();
       });
     },
     editModal: function editModal(user) {
@@ -62834,24 +62804,43 @@ exports.default = {
       $('#addNew').modal('show');
     },
     createUser: function createUser() {
-      var _this4 = this;
+      var _this5 = this;
+
+      console.log(this.form);
 
       this.$Progress.start();
 
       this.form.post('/api/admin/users/post').then(function () {
 
         $('#addNew').modal('hide');
-        _this4.$refs.table.refresh();
+        _this5.$refs.table.refresh();
         window.toastr['success']('User Created in successfully', 'Success');
-        _this4.$Progress.finish();
+        _this5.$Progress.finish();
       }).catch(function () {
 
-        window.toastr['error']('There was an error', 'Error');
+        window.toastr['error']('There was an error on created', 'Error');
+        _this5.$Progress.fail();
       });
     }
   },
   created: function created() {}
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -68191,25 +68180,16 @@ var render = function() {
                         key: "default",
                         fn: function(row) {
                           return [
-                            _c(
-                              "a",
-                              {
-                                staticClass: "avatar",
-                                attrs: { href: _vm.getProfilePhoto(row.avatar) }
+                            _c("img", {
+                              staticStyle: {
+                                width: "36px",
+                                "border-radius": "2px"
                               },
-                              [
-                                _c("img", {
-                                  staticStyle: {
-                                    width: "36px",
-                                    "border-radius": "2px"
-                                  },
-                                  attrs: {
-                                    src: _vm.getProfilePhoto(row.avatar),
-                                    alt: "Avatar"
-                                  }
-                                })
-                              ]
-                            )
+                              attrs: {
+                                src: _vm.getProfilePhoto(row.avatar),
+                                alt: "Avatar"
+                              }
+                            })
                           ]
                         }
                       }
@@ -68539,7 +68519,26 @@ var render = function() {
                         })
                       ],
                       1
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 control-label",
+                          attrs: { for: "avatar" }
+                        },
+                        [_vm._v(" Photo")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-6" }, [
+                        _c("input", {
+                          staticClass: "form-input",
+                          attrs: { type: "file", name: "avatar" },
+                          on: { change: _vm.updateProfile }
+                        })
+                      ])
+                    ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-footer" }, [
