@@ -62666,28 +62666,41 @@ exports.default = {
           filter = _ref.filter,
           sort = _ref.sort;
       return (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-        var response;
+        var response, allData, beforeFilter, filterData;
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios.get('/api/admin/users/get?page=' + page + ',filter=' + filter);
+                return axios.get('/api/admin/users/get?page=' + page);
 
               case 3:
                 response = _context.sent;
+                allData = response.data;
+                beforeFilter = response.data.data;
+                filterData = beforeFilter.filter(function (key) {
+                  //console.log(key);                      
+                  return key.name.toLowerCase().indexOf(filter.toLowerCase()) > -1 || key.email.toLowerCase().indexOf(filter.toLowerCase()) > -1;
+                });
+
+
+                filterData.sort(function (a, b) {
+                  return sort.order == "asc" ? 1 : sort.order == "desc" ? -1 : 0;
+                });
+                // console.log(filterData);
+                // sort.fieldName & sort.order
                 return _context.abrupt('return', {
-                  data: response.data.data,
+                  data: filterData,
                   pagination: {
-                    totalPages: response.data.last_page,
+                    totalPages: allData.last_page,
                     currentPage: page,
-                    count: response.data.count
+                    count: allData.count
                   }
                 });
 
-              case 7:
-                _context.prev = 7;
+              case 11:
+                _context.prev = 11;
                 _context.t0 = _context['catch'](0);
 
                 if (_context.t0) {
@@ -62695,12 +62708,12 @@ exports.default = {
                   _this.$Progress.fail();
                 }
 
-              case 10:
+              case 14:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, _this, [[0, 7]]);
+        }, _callee, _this, [[0, 11]]);
       }))();
     },
     deleteUser: function deleteUser(id) {
@@ -68153,7 +68166,7 @@ var render = function() {
                   ref: "table",
                   attrs: {
                     data: _vm.getUsers,
-                    "sort-by": "row.name",
+                    "sort-by": "id",
                     "sort-order": "desc",
                     "table-class": "table"
                   }

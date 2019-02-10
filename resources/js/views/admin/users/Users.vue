@@ -26,7 +26,7 @@
           <div class="card-body">
             <table-component
               :data="getUsers"
-              sort-by="row.name"
+              sort-by="id"
               sort-order="desc"
               table-class="table"
               ref="table"
@@ -186,16 +186,25 @@ export default {
   methods: {
     async getUsers ({ page, filter, sort }) {
       try {
-        const response = await axios.get(`/api/admin/users/get?page=${page},filter=${filter}`)
+        const response = await axios.get(`/api/admin/users/get?page=${page}`)
 
-        // var d = response.data.data;
-        // console.log(d);
-        return {          
-          data: response.data.data,          
+        var allData = response.data;
+        var beforeFilter = response.data.data;       
+
+        var filterData =  beforeFilter.filter(function(key) {
+        //console.log(key);                      
+          return key.name.toLowerCase().indexOf(filter.toLowerCase()) > -1 || key.email.toLowerCase().indexOf(filter.toLowerCase()) > -1;
+        });
+        
+        filterData.sort((a,b) => (sort.order == "asc" ) ? 1 : ((sort.order == "desc" ) ? -1 : 0)); 
+        // console.log(filterData);
+        // sort.fieldName & sort.order
+        return {
+          data: filterData,          
           pagination: {
-            totalPages: response.data.last_page,
+            totalPages: allData.last_page,
             currentPage: page,
-            count: response.data.count
+            count: allData.count
           }
         }
       } catch (error) {

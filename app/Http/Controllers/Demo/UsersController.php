@@ -16,9 +16,11 @@ use Session;
 
 class UsersController extends Controller
 {
-    public function allUsers()
+    public function allUsers(Request $request)
     {
+        //dd($request->all());
        return $users = User::whereRole('user')->paginate(10);
+       
     }
 
     public function store(Request $request)
@@ -60,7 +62,7 @@ class UsersController extends Controller
         ]);
 
         $currentPhoto = $user->avatar;
-        if($request->avatar){
+        if($request->avatar and $request->avatar != $currentPhoto){
             $image = $request->avatar;            
             // make unique name
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
