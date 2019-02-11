@@ -10,6 +10,7 @@ import AuthService from './services/auth'
 
 // Dashboard
 import Basic from './views/admin/dashboard/Basic.vue'
+import permissions from './views/admin/permissions/permissions.vue'
 // import Ecommerce from './views/admin/dashboard/Ecommerce.vue'
 // import Finance from './views/admin/dashboard/Finance.vue'
 
@@ -67,7 +68,7 @@ import Basic from './views/admin/dashboard/Basic.vue'
 
 // Users
 import Users from './views/admin/users/Users.vue'
-import Profile from './views/admin/users/Profile.vue'
+//import Profile from './views/admin/users/Profile.vue'
 
 // Settings
 // import Settings from './views/admin/Settings.vue'
@@ -165,163 +166,37 @@ const routes = [
       {
         path: 'dashboard/basic',
         component: Basic,
-        name: 'dashboard'
-      },
-      // {
-      //   path: 'dashboard/ecommerce',
-      //   component: Ecommerce
-      // },
-      // {
-      //   path: 'dashboard/finance',
-      //   component: Finance
-      // },
-
-      // // Basic UI
-      // {
-      //   path: 'basic-ui/buttons',
-      //   component: Buttons
-      // },
-      // {
-      //   path: 'basic-ui/cards',
-      //   component: Cards
-      // },
-      // {
-      //   path: 'basic-ui/typography',
-      //   component: Typography
-      // },
-      // {
-      //   path: 'basic-ui/tables',
-      //   component: Tables
-      // },
-
-      // {
-      //   path: 'basic-ui/progress-bars',
-      //   component: ProgressBar
-      // },
-
-      // // Components
-      // {
-      //   path: 'components/vue-tabs',
-      //   component: VueTabs
-      // },
-      // {
-      //   path: 'components/vue-collapse',
-      //   component: VueCollapse
-      // },
-      // {
-      //   path: 'components/notifications',
-      //   component: Notifications
-      // },
-      // {
-      //   path: 'components/vue-dropzone',
-      //   component: VueDropzone
-      // },
-      // {
-      //   path: 'components/sweet-modals',
-      //   component: SweetModals
-      // },
-      // {
-      //   path: 'components/vue-tables',
-      //   component: VueTable
-      // },
-      // {
-      //   path: 'components/vue-carousel',
-      //   component: VueCarousel
-      // },
-      // {
-      //   path: 'components/tooltips',
-      //   component: VueTooltips
-      // },
-
-      // // Charts
-      // {
-      //   path: 'charts/chartjs',
-      //   component: Chartjs
-      // },
-      // {
-      //   path: 'charts/gauges',
-      //   component: Gauges
-      // },
-
-      // //  Icons
-      // {
-      //   path: 'icons/fontawesome',
-      //   component: Fontawesome
-      // },
-      // {
-      //   path: 'icons/fpsline',
-      //   component: Fpsline
-      // },
-      // {
-      //   path: 'icons/icomoon',
-      //   component: IcoMoon
-      // },
-      // {
-      //   path: 'icons/line',
-      //   component: Line
-      // },
-      // {
-      //   path: 'icons/meteo',
-      //   component: Meteo
-      // },
-
-      // // Forms
-      // {
-      //   path: 'forms/general',
-      //   component: General
-      // },
-      // {
-      //   path: 'forms/advanced',
-      //   component: Advanced
-      // },
-      // {
-      //   path: 'forms/layouts',
-      //   component: Layouts
-      // },
-      // {
-      //   path: 'forms/vuelidate',
-      //   component: Vuelidate
-      // },
-      // {
-      //   path: 'forms/vee-validate',
-      //   component: VeeValidate
-      // },
-
-      // // Gallery
-      // {
-      //   path: 'gallery/image',
-      //   component: ImageGallery
-      // },
-      // {
-      //   path: 'gallery/video',
-      //   component: VideoGallery
-      // },
-
-      // Users
-      {
-        path: 'users/profile',
-        component: Profile
+        name: 'basic',
+        title: 'الرئيسية',
+        icon:'icon-fa icon-fa-dashboard',
       },
       {
-        path: 'users/all',
-        component: Users
+        path: 'dashboard/permissions',
+        component: permissions,
+        name: 'permissions',
+        title: ' الصلاحيات ',
+        icon:'icon-fa icon-fa-book',
       },
+      
+      
+    ]
+  },
 
-      // Apps
-      // {
-      //   path: 'apps/mailbox',
-      //   component: MailboxApp
-      // },
-      // {
-      //   path: 'apps/todos',
-      //   component: TodosApp
-      // },
-
-      // // Settings
-      // {
-      //   path: 'settings',
-      //   component: Settings
-      // }
+  {
+    path: '/admin',
+    component: LayoutBasic, // Change the desired Layout here
+    meta: { requiresAuth: true },
+    children: [
+      // Dashboard for permissions
+      
+      {
+        path: 'dashboard/users',
+        component: Users,
+        name:'users',
+        title: 'الاعضاء',
+        icon:'icon-fa icon-fa-user',
+      },
+      
     ]
   },
 

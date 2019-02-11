@@ -19,7 +19,7 @@ class UsersController extends Controller
     public function allUsers(Request $request)
     {
         //dd($request->all());
-       return $users = User::whereRole('user')->paginate(10);
+       return $users = User::paginate(10);
        
     }
 

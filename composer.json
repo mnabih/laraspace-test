@@ -34,7 +34,10 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Space/helpers.php"
+            "app/Space/helpers.php",
+            "app/Helpers/menuAndPermissions.php",
+            "app/Helpers/NotificationConfig.php",
+            "app/Helpers/help.php"
         ]
     },
     "autoload-dev": {

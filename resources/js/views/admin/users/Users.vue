@@ -1,15 +1,18 @@
 <template>
   <div class="main-content">
     <div class="page-header">
-      <h3 class="page-title">Users</h3>
-      <ol class="breadcrumb">
+      <h3 class="page-title">قائمة الاعضاء</h3>
+
+      
+
+      <!-- <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item"><a href="#">Users</a></li>
         <li class="breadcrumb-item active">Users</li>
-      </ol>
+      </ol> -->
       <div class="page-actions">
         <a href="#" class="btn btn-primary" @click.prevent="newModal">
-          <i class="icon-fa icon-fa-plus"/> New User
+          <i class="icon-fa icon-fa-plus"/> اضافة عضو
         </a>
         <!-- <button class="btn btn-danger" @click.prevent="">
           <i class="icon-fa icon-fa-trash"/> Delete
@@ -20,7 +23,7 @@
       <div class="col-sm-12">
         <div class="card">
           <div class="card-header">
-            <h6>All Users</h6>
+            <h6> الاعضاء</h6>
             <div class="card-actions" />
           </div>
           <div class="card-body">
@@ -31,24 +34,22 @@
               table-class="table"
               ref="table"
             >
-              <table-column show="id" label="id"/>
-              <table-column show="name" label="Name"/>
-              <table-column show="email" label="Email"/>
-              <table-column show="role" label="Role"/>
-              <table-column label="Avatar">
-                 <template slot-scope="row">
-                        <!-- <a
-                          href="#"
-                          class="avatar"
-                        > -->
+              <table-column label="الصوره">
+                 <template slot-scope="row">                        
                           <img :src="getProfilePhoto(row.avatar)" alt="Avatar" 
                           style="width: 36px;border-radius: 2px;">
-                        <!-- </a> -->
                  </template>
-               </table-column>
+              </table-column>
+              <table-column show="name" label="الاسم"/>
+              <table-column show="email" label="البريد"/>
+              <table-column show="phone" label="الهاتف"/>
+              <table-column show="role" label="الصلاحية"/>
+              <table-column show="arrears" label="المديونية"/>
+              <table-column show="active" label="الحاله"/>
+              
               <table-column
                 show="created_at"
-                label="Registered On"
+                label="تاريخ الاضافة"
                 data-type="date:YYYY-MM-DD h:i:s"
               />
               <table-column
@@ -60,7 +61,7 @@
                   <div class="table__actions">
                     <!-- <router-link to="/admin/users/profile"> -->
                       <a class="btn btn-default btn-sm" @click="editModal(row)">
-                        <i class="icon-fa icon-fa-search"/> Edit
+                        <i class="icon-fa icon-fa-search"/> تعديل
                       </a>
                     <!-- </router-link> -->
                     <a
@@ -69,7 +70,7 @@
                       data-confirmation="notie"
                       @click="deleteUser(row.id)"
                     >
-                      <i class="icon-fa icon-fa-trash"/> Delete
+                      <i class="icon-fa icon-fa-trash"/> حذف
                     </a>
                   </div>
                 </template>
@@ -209,7 +210,7 @@ export default {
         }
       } catch (error) {
         if (error) {
-          window.toastr['error']('There was an error on get users', 'Error')
+          window.toastr['error']('حذث خطأ اثناء الاضافة ', 'Error')
           this.$Progress.fail();
         }
       }
@@ -217,9 +218,9 @@ export default {
     deleteUser (id) {
       let self = this
       window.notie.confirm({
-        text: 'Are you sure?',
+        text: 'هل انت متأكد ؟',
         cancelCallback: function () {
-          window.toastr['info']('Cancel')
+          window.toastr['info']('الغاء')
         },
         submitCallback: function () {
           self.deleteUserData(id)
@@ -231,10 +232,10 @@ export default {
         let response = await window.axios.delete('/api/admin/users/' + id)
         this.users = response.data
         this.$refs.table.refresh();
-        window.toastr['success']('User Deleted', 'Success')
+        window.toastr['success']('تم الحذف', 'Success')
       } catch (error) {
         if (error) {
-          window.toastr['error']('There was an error on delete user', 'Error')
+          window.toastr['error']('حدث خطأ أثناء الحذف', 'Error')
           this.$Progress.fail();
         }
       }
@@ -248,7 +249,7 @@ export default {
 
         let limit = 1024 * 1024 * 2;
         if(file['size'] > limit){
-            window.toastr['error']('The image size is big', 'Error')
+            window.toastr['error']('الصورة المختارة حجمها كبير', 'Error')
             return false;
         }
         reader.onloadend = (file) => {
@@ -263,7 +264,7 @@ export default {
             // success
             $('#addNew').modal('hide');
             
-            window.toastr['success']('User Updated successfully', 'Success')
+            window.toastr['success']('تم تحديث البيانات بنجاح', 'Success')
 
             this.$Progress.finish();
             this.$refs.table.refresh();
@@ -297,13 +298,13 @@ export default {
 
             $('#addNew').modal('hide')
             this.$refs.table.refresh();
-            window.toastr['success']('User Created in successfully', 'Success')
+            window.toastr['success']('تمت الاضافة بنجاح', 'Success')
             this.$Progress.finish();           
 
         })
         .catch(()=>{
           
-            window.toastr['error']('There was an error on created', 'Error')
+            window.toastr['error']('حدث خطأ أثناء الاضافة', 'Error')
             this.$Progress.fail();
           
         })

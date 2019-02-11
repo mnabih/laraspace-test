@@ -1,8 +1,10 @@
 <template>
-  <!-- <div
+  <div
     id="dashboardPage"
     class="main-content">
-    <div class="row">
+    home
+    
+    <!-- <div class="row">
       <div class="col-md-12 col-lg-6 col-xl-3">
         <a class="dashbox" href="#">
           <i class="icon-fa icon-fa-envelope text-primary"/>
@@ -137,8 +139,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div> -->
+    </div> -->
+  </div>
 </template>
 
 <script type="text/babel">
