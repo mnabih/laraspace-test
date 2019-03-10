@@ -18,9 +18,7 @@ class UsersController extends Controller
 {
     public function allUsers(Request $request)
     {
-        //dd($request->all());
-       return $users = User::paginate(10);
-       
+       return $users = User::paginate(10);       
     }
 
     public function store(Request $request)
@@ -28,7 +26,8 @@ class UsersController extends Controller
         $this->validate($request,[
             'name'      => 'required|string|max:191',
             'email'     => 'required|string|email|max:191|unique:users',
-            'role'      => 'required|string|in:user,admin|max:191',
+            'role'      => '',
+            'phone'     =>  'required',
             'avatar'    => '',
             'password'  => 'required|string|min:6'
         ]);
@@ -36,7 +35,8 @@ class UsersController extends Controller
         $user = new User;
         $user->name      = $request['name'];
         $user->email     = $request['email'];
-        $user->role      = $request['role'];
+        $user->phone     = $request['phone'];
+        $user->role      = $request['role'] != null?$request['role']:0;
         $user->password  = Hash::make($request['password']);       
 
         if($request->avatar){

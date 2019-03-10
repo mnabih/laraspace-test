@@ -7,12 +7,14 @@
     top: 0;
     width: 100%;
     z-index: 1000;
+    
 }
 
 .sidebar-left {
     background: $ls-color-secondary;
     height: 100%;
-    left: 0;
+    //left: 0;
+    right:0;
     padding: 60px 0 10px;
     position: fixed;
     top: 0;
@@ -23,6 +25,8 @@
 .sidebar-body {
     height: 100%;
     overflow-y: auto;
+    float: right;
+    
 
     &::-webkit-scrollbar {
         -webkit-appearance: none;
@@ -61,8 +65,11 @@
 
 .layout-default .main-content,
 .layout-icon-sidebar .main-content {
-    padding: 90px 15px 10px 255px;
+    //padding: 90px 15px 10px 255px;
+    padding: 90px 255px 10px 15px;
     min-height: calc(100% - 39px);
+    direction: rtl;
+    text-align: right;
 }
 
 .site-footer {
@@ -88,7 +95,8 @@
 
     .page-actions {
         position: absolute;
-        right: 0;
+        //right: 0;
+        left:0;
         top: 50%;
         -webkit-transform: translateY(-50%);
         -ms-transform: translateY(-50%);

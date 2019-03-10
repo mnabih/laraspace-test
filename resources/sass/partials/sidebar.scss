@@ -24,6 +24,7 @@
             padding: 12px 12px 12px 30px;
             position: relative;
             text-decoration: none;
+            text-align: right;
 
             &:hover {
                 background-color: $sidemenu-item-bg-color--hover;
@@ -31,6 +32,8 @@
         }
         i {
             width: 30px;
+            float: right;
+            margin-left: 10px;
         }
 
         &.active {

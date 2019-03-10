@@ -1,7 +1,7 @@
 <template>
   <div class="main-content">
     <div class="page-header">
-      <h3 class="page-title">قائمة الاعضاء</h3>
+      <h3 class="page-title">قائمة اﻷعضاء</h3>
 
       
 
@@ -12,7 +12,7 @@
       </ol> -->
       <div class="page-actions">
         <a href="#" class="btn btn-primary" @click.prevent="newModal">
-          <i class="icon-fa icon-fa-plus"/> اضافة عضو
+          <i class="icon-fa icon-fa-plus"/> إضافة عضو
         </a>
         <!-- <button class="btn btn-danger" @click.prevent="">
           <i class="icon-fa icon-fa-trash"/> Delete
@@ -23,7 +23,7 @@
       <div class="col-sm-12">
         <div class="card">
           <div class="card-header">
-            <h6> الاعضاء</h6>
+            <h6> اﻷعضاء</h6>
             <div class="card-actions" />
           </div>
           <div class="card-body">
@@ -33,6 +33,7 @@
               sort-order="desc"
               table-class="table"
               ref="table"
+              filter-placeholder="تصفية نتائج البحث ...."
             >
               <table-column label="الصوره">
                  <template slot-scope="row">                        
@@ -40,16 +41,16 @@
                           style="width: 36px;border-radius: 2px;">
                  </template>
               </table-column>
-              <table-column show="name" label="الاسم"/>
+              <table-column show="name" label="الإسم"/>
               <table-column show="email" label="البريد"/>
               <table-column show="phone" label="الهاتف"/>
-              <table-column show="role" label="الصلاحية"/>
-              <table-column show="arrears" label="المديونية"/>
-              <table-column show="active" label="الحاله"/>
+              <table-column show="role" label="الصلاحية" :formatter="getRole"/>
+              <!-- <table-column show="arrears" label="المديونية"/> -->
+              <table-column show="active" label="الحاله" :formatter="isActive"/>
               
               <table-column
                 show="created_at"
-                label="تاريخ الاضافة"
+                label="تاريخ الإضافة"
                 data-type="date:YYYY-MM-DD h:i:s"
               />
               <table-column
@@ -87,24 +88,31 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editmode" id="addNewLabel">Add New</h5>
-                    <h5 class="modal-title" v-show="editmode" id="addNewLabel">Update User's Info</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" v-show="!editmode" id="addNewLabel">إضافة عضو جديد</h5>
+                    <h5 class="modal-title" v-show="editmode" id="addNewLabel">تحديث بيانات عضو</h5>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                    </button>
+                    </button> -->
                 </div>
                 <form @submit.prevent="editmode ? updateUser() : createUser()">
                     <div class="modal-body">
-                         <div class="form-group">
-                            <input v-model="form.name" type="text" name="name"
-                                placeholder="Name"
-                                class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-                            <has-error :form="form" field="name"></has-error>
+                        <div class="form-group">
+                          <input v-model="form.name" type="text" name="name"
+                              placeholder="الإسم"
+                              class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                          <has-error :form="form" field="name"></has-error>
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <input v-model="form.email" type="email" name="email"
-                                placeholder="Email Address"
+                                placeholder="البريد الإلكترونى "
+                                class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
+                            <has-error :form="form" field="email"></has-error>
+                        </div>
+
+                        <div class="form-group">
+                            <input v-model="form.phone" type="tel" name="phone"
+                                placeholder="رقم الجوال "
                                 class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
                             <has-error :form="form" field="email"></has-error>
                         </div>
@@ -113,16 +121,21 @@
 
 
                         <div class="form-group">
-                            <select name="role" v-model="form.role" id="role" class="form-control" :class="{ 'is-invalid': form.errors.has('role') }">
-                                <option value="">Select User Role</option>
-                                <option value="admin">Admin</option>
-                                <option value="user"> User</option>
+                            <select 
+                            name="role" 
+                            v-model="form.role" 
+                            id="role" 
+                            class="form-control" 
+                            :class="{ 'is-invalid': form.errors.has('role') }"                            
+                            >
+                                <option v-for="item in permissions" :value="item.id">{{item.role}}</option>
+                                
                             </select>
                             <has-error :form="form" field="role"></has-error>
                         </div>
 
                         <div class="form-group">
-                            <input v-model="form.password" type="password" name="password" id="password" placeholder="Password"
+                            <input v-model="form.password" type="password" name="password" id="password" placeholder="كلمة المرور"
                             class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
                             <has-error :form="form" field="password"></has-error>
                         </div>
@@ -138,7 +151,7 @@
                         </div> -->
 
                         <div class="form-group">
-                                    <label for="avatar" class="col-sm-2 control-label"> Photo</label>
+                                    <label for="avatar" class="col-sm-2 control-label"> الصورة</label>
                                     <div class="col-sm-6">
                                         <input type="file" @change="updateProfile" name="avatar" class="form-input">
                                     </div>
@@ -147,9 +160,9 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
-                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">إغلاق</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">تحديث</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">إضافة</button>
                     </div>
 
                 </form>
@@ -174,6 +187,7 @@ export default {
     return {
       editmode: false,
       //users: [],
+      permissions : [],
       form: new Form({
           id:'',
           name : '',
@@ -309,10 +323,23 @@ export default {
           
         })
     },
+    isActive(value){
+      if(value == 0) return '<span class="btn btn-danger btn-sm btn-rounded">حظر</span>'; else return '<span class="btn btn-primary btn-sm btn-rounded">نشط</span>';
+    },
+    getRole(value){
+      if(value == 0) return 'عضو';else return this.getRoleName(value);
+    
+    },
+    getRoleName(value){
+      var Role =  this.permissions.find( permission => permission.id === value );
+      return Role.role;
+    }
+    
     
 
   },
   created(){
+    axios.get(`/api/admin/permissions/get`).then(response => this.permissions = response.data.data);
   },
 }
 </script>
