@@ -26,6 +26,7 @@
               sort-order="desc"
               table-class="table"
               ref="table"
+              filter-placeholder="تصفية نتائج البحث ...."
             >
               
               <table-column show="role" label="الاسم"/>
@@ -43,9 +44,11 @@
                 <template slot-scope="row">
                   <div class="table__actions">
                     <!-- <router-link to="/admin/users/profile"> -->
-                      <a class="btn btn-default btn-sm" @click="">
+                      <router-link 
+                      :to="{ name: 'editPermissions', params: { id: row.id }}" 
+                      class="btn btn-default btn-sm" >
                         <i class="icon-fa icon-fa-search"/> تعديل
-                      </a>
+                      </router-link>
                     <!-- </router-link> -->
                     <a
                       class="btn btn-default btn-sm"
@@ -143,6 +146,10 @@ export default {
 	      }
     	}
     },
+    openEditPermission(id){
+      console.log(id);
+      this.$router.replace('/admin/dashboard/editPermissions/' + id);
+    }
   	
   	
 

@@ -29,18 +29,18 @@ Route::post('email-exist',[
 // admin route
 Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
 
-    Route::resource('todos', 'Demo\TodosController');
+    // Route::resource('todos', 'Demo\TodosController');
 
-    Route::post('todos/toggleTodo/{id}', [
-        'as' => 'admin.todos.toggle', 'uses' => 'Demo\TodosController@toggleTodo'
-    ]);
+    // Route::post('todos/toggleTodo/{id}', [
+    //     'as' => 'admin.todos.toggle', 'uses' => 'Demo\TodosController@toggleTodo'
+    // ]);
 
-    Route::group(['prefix' => 'settings'], function () {
+    // Route::group(['prefix' => 'settings'], function () {
 
-        Route::post('/social', [
-            'as' => 'admin.settings.social', 'uses' => 'Demo\SettingsController@postSocial'
-        ]);
-    });
+    //     Route::post('/social', [
+    //         'as' => 'admin.settings.social', 'uses' => 'Demo\SettingsController@postSocial'
+    //     ]);
+    // });
 
     Route::group(['prefix' => 'users'], function (){
 
@@ -70,7 +70,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
         ]);
 
         Route::delete('/{id}',[
-            'as' => 'admin.permissions.delete', 'uses' => 'PermissionsController@DeletePermission'
+            'as' => 'admin.permissions.delete',
+            'uses' => 'PermissionsController@DeletePermission'
+        ]);
+
+        Route::get('edit-permissions/{id}',[
+            'uses' =>'PermissionsController@EditPermissions',
+            'as'   =>'editpermissionpage',
+            'title'=>'تعديل صلاحيه'
         ]);
 
 
